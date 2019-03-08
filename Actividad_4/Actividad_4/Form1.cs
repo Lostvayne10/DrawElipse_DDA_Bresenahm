@@ -22,9 +22,10 @@ namespace Actividad_4
             Band = 0;
         }
 
-        private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
-        {
-            if(Band == 0)
+        private void pictureBox1_MouseClick(object sender, MouseEventArgs e)  /// Saca las coordenada de los puntos 
+        {                                                                     /// que se requieren para los puntos
+                                                                              /// del elipse
+            if (Band == 0)
             {
                 xi = e.X;
                 yi = e.Y;
@@ -46,14 +47,14 @@ namespace Actividad_4
                 yr = SacarRadio(xi, yi, e.X, e.Y);
                 bmp.SetPixel(e.X, e.Y, Color.Red);
                 Band = 0;
-
+                AlgoritmoDDA(xi, yi, xr, yr);
                 MessageBox.Show("Resultado yr: " + yr);
             }
 
             pictureBox1.Image = bmp;
         }
 
-        private double SacarRadio(int x1, int y1, int x2, int y2)
+        private double SacarRadio(int x1, int y1, int x2, int y2)  /// FUNCION PARA SACAR LA DISTANCIA ENTRE EL PUNTO A a B y A a C
         {
             double resultado;
             resultado = 0;
@@ -62,6 +63,46 @@ namespace Actividad_4
             resultado = (Math.Sqrt(Math.Pow(Dx2, 2) + Math.Pow(Dy2, 2)));
             return resultado;
         }
+
+        private void AlgoritmoDDA(int x1,int y1, double xr,double yr)
+        {
+            double x, y;
+            x = 0;
+            y = 0;
+           
+            double Xr2 = Math.Pow(xr, 2);
+            double Yr2 = Math.Pow(yr, 2);
+            double Rx2Yr2 = Xr2 * Yr2;
+            
+            for(x=0; x<xr;x++)
+            {
+                y = Math.Sqrt((Rx2Yr2 - (Math.Pow(x, 2) * Yr2)) / (Xr2));
+                drawCuadrantes(x, y, x1, y1, Color.Black);
+            }
+            for (y = 0; y < yr; y++)
+            {
+                x = Math.Sqrt((Rx2Yr2 - (Math.Pow(y, 2) * Xr2)) / (Yr2));
+                drawCuadrantes(x, y, x1, y1, Color.Black);
+            }
+
+        }
+
+        void drawCuadrantes(double x, double y, int xc, int yc, Color col)
+        {
+
+            if (x + xc > 0 && x + xc < 600 && y + yc > 0 && y + yc < 500)  /// Cuadrante 2
+                bmp.SetPixel((int)x + xc, (int)y + yc, col);
+            if (-x + xc > 0 && -x + xc < 600 && -y + yc > 0 && -y + yc < 500)  ///CUADRANTE 6
+                bmp.SetPixel((int)-x + xc, (int)-y + yc, col);
+            if (-x + xc > 0 && -x + xc < 600 && y + yc > 0 && y + yc < 500)  ///Cuadrante 3
+                bmp.SetPixel((int)-x + xc, (int)y + yc, col);
+            if (x + xc > 0 && x + xc < 600 && -y + yc > 0 && -y + yc < 500)  ///Cuadrante 7
+                bmp.SetPixel((int)x + xc, (int)-y + yc, col);
+            
+            
+
+        }
+
 
     }
 }
