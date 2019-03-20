@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace Actividad_4
 {
@@ -34,22 +35,16 @@ namespace Actividad_4
 
                 Band ++;
             }
-            else if(Band == 1)
+            else 
             {
-                xr = SacarRadio(xi,yi,e.X,e.Y);
+                xr = Math.Abs(xi - e.X);
+                yr = Math.Abs(yi - e.Y);
                 bmp.SetPixel(e.X, e.Y, Color.Red);
-                Band ++;
-
-                MessageBox.Show("Resultado xr: " + xr);
-            }
-            else
-            {
-                yr = SacarRadio(xi, yi, e.X, e.Y);
-                bmp.SetPixel(e.X, e.Y, Color.Red);
-                Band = 0;
+                Band =0;
                 AlgoritmoDDA(xi, yi, xr, yr);
-                MessageBox.Show("Resultado yr: " + yr);
+                AlgoritmoBresenham(xi, yi, xr, yr);
             }
+     
 
             pictureBox1.Image = bmp;
         }
@@ -66,6 +61,10 @@ namespace Actividad_4
 
         private void AlgoritmoDDA(int x1,int y1, double xr,double yr)
         {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+
             double x, y;
             x = 0;
             y = 0;
@@ -77,15 +76,74 @@ namespace Actividad_4
             for(x=0; x<xr;x++)
             {
                 y = Math.Sqrt((Rx2Yr2 - (Math.Pow(x, 2) * Yr2)) / (Xr2));
-                drawCuadrantes(x, y, x1, y1, Color.Black);
+                drawCuadrantes(x, Math.Round(y), x1, y1, Color.Black);
             }
             for (y = 0; y < yr; y++)
             {
                 x = Math.Sqrt((Rx2Yr2 - (Math.Pow(y, 2) * Xr2)) / (Yr2));
-                drawCuadrantes(x, y, x1, y1, Color.Black);
+                drawCuadrantes(Math.Round(x), y, x1, y1, Color.Black);
             }
 
+            stopwatch.Stop();
+            TimeSpan ts = stopwatch.Elapsed;
+            timeDDA.Text = String.Format("{0}", ts.TotalMilliseconds);
+
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            bmp = new Bitmap(600, 500);
+            pictureBox1.Image = bmp;
+        }
+
+        private void AlgoritmoBresenham(int x1, int y1, double rx, double ry)
+        {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            double x, y, rx2, ry2, pk, pk2;
+            x = 0;
+            y = ry;
+            rx2 = Math.Pow(rx, 2);
+            ry2 = Math.Pow(ry, 2);
+            pk = ry2 - (rx2 * ry) + (0.25 * rx2);   ///Inicializacion PK para primera iteracion por cada x iterar en y
+            while ((ry2 * x) < (rx2 * y))   ///Cuando radio cuadrado de y sea mayor al radio cuadrado de x iterando con el opuesto para esta iteracion
+            {
+                if (pk < 0)
+                {
+                    x++;
+                    pk = pk + (2 * ry2 * x) + ry2;
+                }
+                else
+                {
+                    x++; y--;
+                    pk = pk + (2 * ry2 * x) - (2 * rx2 * y) + ry2;
+                }
+                drawCuadrantes(x, y, x1, y1, Color.Red);        
+            }  ///termina iteraciones en  Pk1 para cambiar a iterar por cada y una x
+            pk2 = (ry2) * Math.Pow((x + 0.5), 2) + (rx2) * Math.Pow((y - 1), 2) - (rx2 * ry2);
+            while (y > 0)
+            {
+                if (pk2 > 0)
+                {
+                    y--;
+                    pk2 = pk2 - (2 * rx2 * y) + rx2;
+                }
+                else
+                {
+                    x++; y--;
+                    pk2 = pk2 + (2 * ry2 * x) - (2 * rx2 * y) + rx2;
+                }
+                drawCuadrantes(x, y, x1, y1, Color.Red);
+            }
+
+            stopwatch.Stop();
+            TimeSpan ts = stopwatch.Elapsed;
+            timeBresenham.Text = String.Format("{0}", ts.TotalMilliseconds);
+
+
+        }
+
 
         void drawCuadrantes(double x, double y, int xc, int yc, Color col)
         {
