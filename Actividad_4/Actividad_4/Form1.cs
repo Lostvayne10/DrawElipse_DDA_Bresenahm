@@ -30,9 +30,7 @@ namespace Actividad_4
             {
                 xi = e.X;
                 yi = e.Y;
-
                 bmp.SetPixel(xi, yi, Color.Red);
-
                 Band ++;
             }
             else 
@@ -40,9 +38,9 @@ namespace Actividad_4
                 xr = Math.Abs(xi - e.X);
                 yr = Math.Abs(yi - e.Y);
                 bmp.SetPixel(e.X, e.Y, Color.Red);
-                Band =0;
                 AlgoritmoDDA(xi, yi, xr, yr);
                 AlgoritmoBresenham(xi, yi, xr, yr);
+                Band = 0;
             }
      
 
@@ -68,17 +66,18 @@ namespace Actividad_4
             double x, y;
             x = 0;
             y = 0;
+            y = yr;
            
             double Xr2 = Math.Pow(xr, 2);
             double Yr2 = Math.Pow(yr, 2);
             double Rx2Yr2 = Xr2 * Yr2;
             
-            for(x=0; x<xr;x++)
+            for(x=0; (Yr2 * x) < (Xr2 * y); x++)
             {
                 y = Math.Sqrt((Rx2Yr2 - (Math.Pow(x, 2) * Yr2)) / (Xr2));
                 drawCuadrantes(x, Math.Round(y), x1, y1, Color.Black);
             }
-            for (y = 0; y < yr; y++)
+            for (y = Math.Round(y); y > 0; y--)
             {
                 x = Math.Sqrt((Rx2Yr2 - (Math.Pow(y, 2) * Xr2)) / (Yr2));
                 drawCuadrantes(Math.Round(x), y, x1, y1, Color.Black);
@@ -148,13 +147,13 @@ namespace Actividad_4
         void drawCuadrantes(double x, double y, int xc, int yc, Color col)
         {
 
-            if (x + xc > 0 && x + xc < 600 && y + yc > 0 && y + yc < 500)  /// Cuadrante 2
+            if (x + xc > 0 && x + xc < 600 && y + yc > 0 && y + yc < 500)  /// Cuadrante 1
                 bmp.SetPixel((int)x + xc, (int)y + yc, col);
-            if (-x + xc > 0 && -x + xc < 600 && -y + yc > 0 && -y + yc < 500)  ///CUADRANTE 6
+            if (-x + xc > 0 && -x + xc < 600 && -y + yc > 0 && -y + yc < 500) ///CUADRANTE 3
                 bmp.SetPixel((int)-x + xc, (int)-y + yc, col);
-            if (-x + xc > 0 && -x + xc < 600 && y + yc > 0 && y + yc < 500)  ///Cuadrante 3
+            if (-x + xc > 0 && -x + xc < 600 && y + yc > 0 && y + yc < 500)  ///Cuadrante 2
                 bmp.SetPixel((int)-x + xc, (int)y + yc, col);
-            if (x + xc > 0 && x + xc < 600 && -y + yc > 0 && -y + yc < 500)  ///Cuadrante 7
+            if (x + xc > 0 && x + xc < 600 && -y + yc > 0 && -y + yc < 500)  ///Cuadrante 4
                 bmp.SetPixel((int)x + xc, (int)-y + yc, col);
             
             
